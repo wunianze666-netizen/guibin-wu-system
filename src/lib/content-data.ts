@@ -164,9 +164,9 @@ export const homeModules: Array<{
 
 export const defaultContent: SiteContent = {
   site: {
-    name: "吴贵宾个人主页",
+    name: "个人主页",
     tagline: "明亮、清爽、持续生长的个人空间",
-    heroTitle: "欢迎来到吴贵宾的个人主页",
+    heroTitle: "欢迎来到我的个人主页",
     heroSubtitle: "这里记录我的成长、项目、作品和一些认真生活的片段。",
     theme: "橙黄 / 青绿 / 湖蓝",
     adminEmail: "admin@example.com",
