@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --color-cream: #fffaf0;
+  --color-citrus: #ffb21f;
+  --color-orange: #ff7f24;
+  --color-mint: #97d66c;
+  --color-lake: #54bfe6;
+  --color-ink: #24170c;
+}
+
+:root {
+  --background: #fffaf0;
+  --foreground: #24170c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 0 8%, rgba(255, 211, 88, 0.36), transparent 13rem),
+    radial-gradient(circle at 96% 18%, rgba(84, 191, 230, 0.2), transparent 18rem),
+    linear-gradient(180deg, #fffdf5 0%, #fffaf0 58%, #fff6e3 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.soft-card {
+  border: 1px solid rgba(246, 186, 74, 0.36);
+  background: rgba(255, 255, 251, 0.78);
+  box-shadow: 0 18px 55px rgba(212, 157, 66, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.fruit-cluster {
+  position: absolute;
+  right: clamp(-2rem, 2vw, 4rem);
+  top: 1.2rem;
+  width: min(27vw, 24rem);
+  min-width: 15rem;
+  aspect-ratio: 1.45;
+  pointer-events: none;
+}
+
+.fruit-cluster::before {
+  content: "";
+  position: absolute;
+  inset: 18% 0 0 24%;
+  border-radius: 999px 999px 40% 55%;
+  background: linear-gradient(135deg, rgba(150, 224, 211, 0.58), rgba(232, 255, 202, 0.48));
+  transform: rotate(-12deg);
+}
+
+.fruit-cluster::after {
+  content: "";
+  position: absolute;
+  right: 20%;
+  top: 18%;
+  width: 36%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 28% 28%, rgba(255, 255, 255, 0.78) 0 6%, transparent 7%),
+    radial-gradient(circle at 64% 52%, rgba(255, 141, 36, 0.18) 0 4%, transparent 5%),
+    linear-gradient(145deg, #ffe266, #ffae21);
+  box-shadow: 0 18px 35px rgba(255, 169, 33, 0.22);
+}
+
+.leaf {
+  position: absolute;
+  width: 18%;
+  aspect-ratio: 1.8;
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(135deg, #80c957, #3a9f37);
+  transform: rotate(-26deg);
+}
+
+.leaf.one {
+  right: 12%;
+  top: 3%;
+}
+
+.leaf.two {
+  right: 2%;
+  top: 10%;
+  transform: rotate(-14deg);
+}
+
+.slice {
+  position: absolute;
+  left: 27%;
+  top: 45%;
+  width: 28%;
+  aspect-ratio: 1.65;
+  border-radius: 0 0 999px 999px;
+  border: 0.7rem solid #ffad1c;
+  border-top: 0;
+  background: repeating-conic-gradient(from 180deg, #ffd66f 0 20deg, #fff4c2 20deg 25deg);
+  transform: rotate(10deg);
+}
+
+.home-watermark {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 15rem;
+  background-image: url("/images/home-faint-background-source.jpg");
+  background-position: bottom center;
+  background-size: cover;
+  opacity: 0.085;
+  filter: grayscale(80%) saturate(28%);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 4px rgba(84, 191, 230, 0.24);
+}
