@@ -6,6 +6,8 @@ function hasValue(name: string) {
 
 export async function GET() {
   return NextResponse.json({
+    message:
+      "This endpoint only shows whether environment variables exist. It never exposes secret values.",
     env: {
       NEXT_PUBLIC_SUPABASE_URL: hasValue("NEXT_PUBLIC_SUPABASE_URL"),
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: hasValue("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),

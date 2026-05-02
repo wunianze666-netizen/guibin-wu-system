@@ -7,7 +7,7 @@ function getSupabaseConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-  if (!url || !publishableKey) return null;
+  if (!url) return null;
   return { url, publishableKey };
 }
 
@@ -22,13 +22,17 @@ export function hasSupabaseConfig() {
 export async function fetchSiteContent(): Promise<SiteContent> {
   const config = getSupabaseConfig();
   if (!config) return defaultContent;
+  const serverKey = getAdminKey();
+  const readKey = serverKey || config.publishableKey;
+
+  if (!readKey) return defaultContent;
 
   const response = await fetch(
     `${config.url}/rest/v1/site_content?id=eq.${CONTENT_ID}&select=content`,
     {
       headers: {
-        apikey: config.publishableKey,
-        Authorization: `Bearer ${config.publishableKey}`,
+        apikey: readKey,
+        Authorization: `Bearer ${readKey}`,
       },
       cache: "no-store",
     },
@@ -45,8 +49,12 @@ export async function saveSiteContent(content: SiteContent) {
   const config = getSupabaseConfig();
   const adminKey = getAdminKey();
 
-  if (!config || !adminKey) {
-    throw new Error("Missing Supabase server credentials");
+  if (!config) {
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
+  }
+
+  if (!adminKey) {
+    throw new Error("Missing SUPABASE_SECRET_KEY");
   }
 
   const response = await fetch(`${config.url}/rest/v1/site_content`, {
