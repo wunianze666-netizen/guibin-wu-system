@@ -21,15 +21,22 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  if (!isAuthorized(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    if (!isAuthorized(request)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const body = (await request.json()) as { content?: typeof defaultContent };
-  if (!body.content) {
-    return NextResponse.json({ error: "Missing content" }, { status: 400 });
-  }
+    const body = (await request.json()) as { content?: typeof defaultContent };
+    if (!body.content) {
+      return NextResponse.json({ error: "Missing content" }, { status: 400 });
+    }
 
-  await saveSiteContent(body.content);
-  return NextResponse.json({ ok: true });
+    await saveSiteContent(body.content);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Unknown save error" },
+      { status: 500 },
+    );
+  }
 }
