@@ -8,9 +8,12 @@ const STORAGE_KEY = "guibin-wu-site-content-v1";
 const ADMIN_PASSWORD_KEY = "guibin-wu-admin-password";
 const listeners = new Set<() => void>();
 
+type SaveStatus = "idle" | "dirty" | "saving" | "saved" | "error";
+
 let currentContent: SiteContent = defaultContent;
 let loaded = false;
 let remoteLoadStarted = false;
+let saveStatus: SaveStatus = "idle";
 let lastError = "";
 
 function emit() {
@@ -43,9 +46,10 @@ function getServerSnapshot() {
   return defaultContent;
 }
 
-function saveLocalContent(nextContent: SiteContent) {
+function writeLocalContent(nextContent: SiteContent, status: SaveStatus) {
   currentContent = nextContent;
   loaded = true;
+  saveStatus = status;
   if (typeof window !== "undefined") {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextContent));
   }
@@ -65,9 +69,11 @@ async function loadRemoteContent() {
       error?: string;
     };
     if (data.error) lastError = data.error;
-    if (data.content) saveLocalContent(mergeContent(data.content));
+    if (data.content) writeLocalContent(mergeContent(data.content), "saved");
   } catch (error) {
     lastError = error instanceof Error ? error.message : "Failed to load remote content";
+    saveStatus = "error";
+    emit();
   }
 }
 
@@ -78,6 +84,10 @@ async function saveRemoteContent(nextContent: SiteContent) {
     window.sessionStorage.getItem(ADMIN_PASSWORD_KEY) ||
     window.localStorage.getItem(ADMIN_PASSWORD_KEY) ||
     "admin123";
+
+  saveStatus = "saving";
+  lastError = "";
+  emit();
 
   const response = await fetch("/api/content", {
     method: "PUT",
@@ -90,8 +100,15 @@ async function saveRemoteContent(nextContent: SiteContent) {
 
   if (!response.ok) {
     const message = await response.text();
-    throw new Error(`Remote save failed: ${response.status} ${message}`);
+    saveStatus = "error";
+    lastError = `保存失败：${response.status} ${message}`;
+    emit();
+    return;
   }
+
+  saveStatus = "saved";
+  lastError = "";
+  emit();
 }
 
 export function rememberAdminPassword(password: string) {
@@ -109,25 +126,29 @@ export function useContentStore() {
   const updateContent = useCallback(
     (updater: (current: SiteContent) => SiteContent) => {
       const nextContent = updater(currentContent);
-      saveLocalContent(nextContent);
-      void saveRemoteContent(nextContent).catch((error) => {
-        lastError = error instanceof Error ? error.message : "Failed to save remote content";
-        emit();
-      });
+      writeLocalContent(nextContent, "dirty");
     },
     [],
   );
 
+  const saveContent = useCallback(() => {
+    void saveRemoteContent(currentContent);
+  }, []);
+
   const resetContent = useCallback(() => {
-    saveLocalContent(defaultContent);
+    writeLocalContent(defaultContent, "dirty");
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEY);
     }
-    void saveRemoteContent(defaultContent).catch((error) => {
-      lastError = error instanceof Error ? error.message : "Failed to reset remote content";
-      emit();
-    });
   }, []);
 
-  return { content, hydrated: loaded, lastError, updateContent, resetContent };
+  return {
+    content,
+    hydrated: loaded,
+    lastError,
+    saveContent,
+    saveStatus,
+    updateContent,
+    resetContent,
+  };
 }

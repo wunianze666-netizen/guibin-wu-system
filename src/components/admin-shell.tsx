@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
 import { adminNav } from "@/lib/content-data";
+import { useContentStore } from "@/lib/use-content-store";
 
 export function AdminShell({
   title,
@@ -16,6 +17,7 @@ export function AdminShell({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const { lastError, saveContent, saveStatus } = useContentStore();
   const [allowed] = useState(
     () =>
       typeof window !== "undefined" &&
@@ -35,6 +37,15 @@ export function AdminShell({
       </main>
     );
   }
+
+  const statusLabel =
+    saveStatus === "saving"
+      ? "正在保存..."
+      : saveStatus === "dirty"
+        ? "有未保存修改"
+        : saveStatus === "error"
+          ? "保存失败"
+          : "已保存";
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_0_0,rgba(255,225,123,0.32),transparent_22rem),linear-gradient(180deg,#fffdf5,#fff5df)]">
@@ -75,10 +86,32 @@ export function AdminShell({
                 <h1 className="text-4xl font-black text-ink">{title}</h1>
                 <p className="mt-3 text-lg text-stone-600">{description}</p>
               </div>
-              <div className="rounded-full bg-lime-100 px-5 py-3 font-black text-lime-800">
-                已自动保存到本机浏览器
+              <div className="flex flex-wrap items-center gap-3">
+                <span
+                  className={`rounded-full px-5 py-3 font-black ${
+                    saveStatus === "error"
+                      ? "bg-orange-100 text-orange-700"
+                      : saveStatus === "dirty"
+                        ? "bg-yellow-100 text-amber-800"
+                        : "bg-lime-100 text-lime-800"
+                  }`}
+                >
+                  {statusLabel}
+                </span>
+                <button
+                  type="button"
+                  className="rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-3 font-black text-white shadow-[0_12px_24px_rgba(255,127,36,0.22)]"
+                  onClick={saveContent}
+                >
+                  保存到云端
+                </button>
               </div>
             </div>
+            {lastError ? (
+              <p className="mt-5 rounded-2xl bg-orange-50 p-4 font-bold text-orange-700">
+                {lastError}
+              </p>
+            ) : null}
           </section>
           {children}
         </main>
@@ -183,7 +216,9 @@ export function UploadBox({
             ↑
           </div>
         )}
-        <p className="font-black text-stone-700">{value ? "已选择文件，点击可替换" : label}</p>
+        <p className="font-black text-stone-700">
+          {value ? "已选择文件，点击可替换" : label}
+        </p>
         <p className="mt-2 text-sm text-stone-500">支持 JPG / PNG / PDF，本地预览保存</p>
       </button>
       {value ? (
@@ -212,13 +247,6 @@ export function ActionRow({
 }) {
   return (
     <div className="mt-5 flex flex-wrap gap-3">
-      <button
-        type="button"
-        className="rounded-full bg-lime-100 px-5 py-2 font-bold text-lime-800"
-        onClick={() => window.alert("内容已自动保存，可以点“预览主页”查看效果。")}
-      >
-        保存
-      </button>
       {onAdd ? (
         <button
           type="button"
