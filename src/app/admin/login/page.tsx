@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
-import { useContentStore } from "@/lib/use-content-store";
+import { rememberAdminPassword, useContentStore } from "@/lib/use-content-store";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -12,14 +12,22 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  function login() {
+  async function login() {
     const expectedEmail = content.site.adminEmail || "admin@example.com";
-    if (email.trim() === expectedEmail && password === "admin123") {
+    const response = await fetch("/api/admin-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.ok) {
       window.sessionStorage.setItem("guibin-wu-admin-session", "true");
+      rememberAdminPassword(password);
       router.push("/admin");
       return;
     }
-    setError(`请使用 ${expectedEmail} 和临时密码 admin123 登录。`);
+
+    setError(`请使用 ${expectedEmail} 和你在 EdgeOne 设置的后台密码登录。`);
   }
 
   return (
@@ -46,14 +54,14 @@ export default function AdminLoginPage() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             onKeyDown={(event) => {
-              if (event.key === "Enter") login();
+              if (event.key === "Enter") void login();
             }}
           />
           {error ? <p className="rounded-2xl bg-orange-50 p-3 text-sm font-bold text-orange-700">{error}</p> : null}
           <button
             type="button"
             className="rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-4 font-black text-white shadow-[0_12px_24px_rgba(255,127,36,0.24)]"
-            onClick={login}
+            onClick={() => void login()}
           >
             登录后台
           </button>
