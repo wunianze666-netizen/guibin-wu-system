@@ -68,7 +68,12 @@ async function loadRemoteContent() {
       content?: Partial<SiteContent>;
       error?: string;
     };
-    if (data.error) lastError = data.error;
+    if (data.error) {
+      lastError = data.error;
+      saveStatus = "error";
+      emit();
+      return;
+    }
     if (data.content) writeLocalContent(mergeContent(data.content), "saved");
   } catch (error) {
     lastError = error instanceof Error ? error.message : "Failed to load remote content";

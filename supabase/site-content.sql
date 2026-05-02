@@ -13,6 +13,9 @@ for select
 to anon, authenticated
 using (true);
 
+grant select on table public.site_content to anon, authenticated;
+grant select, insert, update on table public.site_content to service_role;
+
 insert into public.site_content (id, content)
 values ('main', '{}'::jsonb)
 on conflict (id) do nothing;
