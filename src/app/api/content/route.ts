@@ -3,7 +3,8 @@ import { defaultContent } from "@/lib/content-data";
 import { fetchSiteContent, saveSiteContent } from "@/lib/supabase-rest";
 
 function isAuthorized(request: Request) {
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) return false;
   const password = request.headers.get("x-admin-password");
   return password === adminPassword;
 }

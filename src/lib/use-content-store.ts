@@ -88,7 +88,7 @@ async function saveRemoteContent(nextContent: SiteContent) {
   const adminPassword =
     window.sessionStorage.getItem(ADMIN_PASSWORD_KEY) ||
     window.localStorage.getItem(ADMIN_PASSWORD_KEY) ||
-    "admin123";
+    "";
 
   saveStatus = "saving";
   lastError = "";
