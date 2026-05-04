@@ -219,8 +219,14 @@ export function ResumeContent() {
           <SoftCard>
             <h2 className="mb-5 text-2xl font-black">简历图片</h2>
             {resume.image?.startsWith("data:image") ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={resume.image} alt="简历图片" className="w-full rounded-2xl object-contain" />
+              <div className="max-h-[78vh] overflow-auto rounded-2xl border border-amber-100 bg-white/70 p-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={resume.image}
+                  alt="简历图片"
+                  className="mx-auto max-h-[72vh] w-auto max-w-full rounded-xl object-contain"
+                />
+              </div>
             ) : (
               <p className="text-stone-600">还没有上传简历图片。</p>
             )}
