@@ -127,7 +127,7 @@ export function WorksContent() {
       <div className="space-y-6">
         {content.works.map((work) => (
           <SoftCard key={work.id}>
-            <div className="grid gap-7 lg:grid-cols-[280px_1fr_340px]">
+            <div className="grid gap-7 lg:grid-cols-[280px_1fr]">
               <ImageOrArt src={work.image} accent={work.accent} alt={work.name} />
               <div>
                 <h2 className="text-2xl font-black">{work.name}</h2>
@@ -140,11 +140,6 @@ export function WorksContent() {
                     </Pill>
                   ))}
                 </div>
-              </div>
-              <div className="grid grid-cols-3 gap-3 self-center">
-                {[0, 1, 2].map((item) => (
-                  <div key={item} className={`aspect-square rounded-2xl border bg-gradient-to-br ${accentStyles[work.accent].card}`} />
-                ))}
               </div>
             </div>
           </SoftCard>
