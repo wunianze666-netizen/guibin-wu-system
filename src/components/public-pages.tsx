@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Hero } from "@/components/hero";
 import { ArtPanel, Pill, SoftCard } from "@/components/ui";
+import type { Message } from "@/lib/content-data";
 import { accentStyles } from "@/lib/styles";
 import { useContentStore } from "@/lib/use-content-store";
 
@@ -259,7 +260,7 @@ export function ResumeContent() {
           onChange={(event) => setCode(event.target.value)}
         />
         <button
-          className="mt-5 w-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4 font-black text-white shadow-[0_14px_30px_rgba(255,127,36,0.24)]"
+          className="mt-5 w-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4 font-black text-white shadow-[0_14px_30px_rgba(255,127,36,0.24)] transition hover:brightness-105 active:scale-[0.98]"
           onClick={() => setUnlocked(code === resume.accessCode)}
         >
           验证访问码
@@ -315,23 +316,39 @@ export function MessagesContent() {
   const { content, updateContent } = useContentStore();
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">(
+    "idle",
+  );
+  const [submitError, setSubmitError] = useState("");
 
-  function submitMessage() {
+  async function submitMessage() {
     if (!name.trim() || !message.trim()) return;
-    updateContent((current) => ({
-      ...current,
-      messages: [
-        ...current.messages,
-        {
-          id: `message-${Date.now()}`,
-          name: name.trim(),
-          date: new Date().toISOString().slice(0, 10),
-          content: message.trim(),
-        },
-      ],
-    }));
-    setName("");
-    setMessage("");
+    setSubmitStatus("submitting");
+    setSubmitError("");
+
+    try {
+      const response = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, content: message }),
+      });
+
+      const data = (await response.json()) as { message?: Message; error?: string };
+      if (!response.ok || !data.message) {
+        throw new Error(data.error || "留言提交失败");
+      }
+
+      updateContent((current) => ({
+        ...current,
+        messages: [...current.messages, data.message as Message],
+      }));
+      setName("");
+      setMessage("");
+      setSubmitStatus("success");
+    } catch (error) {
+      setSubmitStatus("error");
+      setSubmitError(error instanceof Error ? error.message : "留言提交失败");
+    }
   }
 
   return (
@@ -355,9 +372,36 @@ export function MessagesContent() {
           <div className="mt-5 space-y-4">
             <input className="w-full rounded-2xl border border-amber-100 bg-white/70 px-5 py-4 outline-none focus:border-amber-300" placeholder="你的称呼" value={name} onChange={(event) => setName(event.target.value)} />
             <textarea className="min-h-36 w-full rounded-2xl border border-amber-100 bg-white/70 px-5 py-4 outline-none focus:border-amber-300" placeholder="想说的话" value={message} onChange={(event) => setMessage(event.target.value)} />
-            <button type="button" className="w-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400 px-6 py-4 font-black text-white" onClick={submitMessage}>
-              提交留言
+            <button
+              type="button"
+              className={`w-full rounded-full px-6 py-4 font-black text-white shadow-[0_12px_24px_rgba(255,127,36,0.2)] transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 ${
+                submitStatus === "success"
+                  ? "bg-lime-600"
+                  : submitStatus === "error"
+                    ? "bg-orange-600"
+                    : "bg-gradient-to-r from-amber-400 to-orange-400"
+              }`}
+              disabled={submitStatus === "submitting"}
+              onClick={() => void submitMessage()}
+            >
+              {submitStatus === "submitting"
+                ? "提交中..."
+                : submitStatus === "success"
+                  ? "已提交"
+                  : submitStatus === "error"
+                    ? "重新提交"
+                    : "提交留言"}
             </button>
+            {submitStatus === "success" ? (
+              <p className="rounded-2xl bg-lime-50 p-3 text-sm font-bold text-lime-700">
+                留言已保存，刷新后也会保留。
+              </p>
+            ) : null}
+            {submitError ? (
+              <p className="rounded-2xl bg-orange-50 p-3 text-sm font-bold text-orange-700">
+                {submitError}
+              </p>
+            ) : null}
           </div>
         </SoftCard>
       </div>

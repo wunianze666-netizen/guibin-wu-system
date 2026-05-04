@@ -47,6 +47,15 @@ export function AdminShell({
           ? "保存失败"
           : "已保存";
 
+  const saveButtonLabel =
+    saveStatus === "saving"
+      ? "正在保存..."
+      : saveStatus === "saved"
+        ? "已保存到云端"
+        : saveStatus === "error"
+          ? "重试保存"
+          : "保存到云端";
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_0_0,rgba(255,225,123,0.32),transparent_22rem),linear-gradient(180deg,#fffdf5,#fff5df)]">
       <header className="border-b border-amber-100 bg-white/76 backdrop-blur-2xl">
@@ -55,7 +64,7 @@ export function AdminShell({
           <div className="flex flex-wrap gap-3">
             <Link
               href="/"
-              className="rounded-full border border-amber-200 bg-white px-5 py-2 font-bold text-amber-800"
+            className="rounded-full border border-amber-200 bg-white px-5 py-2 font-bold text-amber-800 transition hover:bg-amber-50 active:scale-[0.98]"
             >
               预览主页
             </Link>
@@ -100,10 +109,17 @@ export function AdminShell({
                 </span>
                 <button
                   type="button"
-                  className="rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-3 font-black text-white shadow-[0_12px_24px_rgba(255,127,36,0.22)]"
+                  className={`rounded-full px-5 py-3 font-black text-white shadow-[0_12px_24px_rgba(255,127,36,0.22)] transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 ${
+                    saveStatus === "saved"
+                      ? "bg-lime-600"
+                      : saveStatus === "error"
+                        ? "bg-orange-600"
+                        : "bg-gradient-to-r from-amber-400 to-orange-500"
+                  }`}
+                  disabled={saveStatus === "saving"}
                   onClick={saveContent}
                 >
-                  保存到云端
+                  {saveButtonLabel}
                 </button>
               </div>
             </div>
@@ -201,7 +217,7 @@ export function UploadBox({
       />
       <button
         type="button"
-        className="w-full rounded-[1.25rem] p-3 transition hover:bg-white/55"
+        className="w-full rounded-[1.25rem] p-3 transition hover:bg-white/55 active:scale-[0.99]"
         onClick={() => inputRef.current?.click()}
       >
         {value?.startsWith("data:image") ? (
@@ -224,7 +240,7 @@ export function UploadBox({
       {value ? (
         <button
           type="button"
-          className="mt-3 rounded-full bg-orange-100 px-4 py-2 font-bold text-orange-700"
+          className="mt-3 rounded-full bg-orange-100 px-4 py-2 font-bold text-orange-700 transition hover:bg-orange-200 active:scale-[0.98]"
           onClick={() => onChange("")}
         >
           移除文件
@@ -250,7 +266,7 @@ export function ActionRow({
       {onAdd ? (
         <button
           type="button"
-          className="rounded-full bg-yellow-100 px-5 py-2 font-bold text-amber-800"
+          className="rounded-full bg-yellow-100 px-5 py-2 font-bold text-amber-800 transition hover:bg-yellow-200 active:scale-[0.98]"
           onClick={onAdd}
         >
           {addLabel}
@@ -259,7 +275,7 @@ export function ActionRow({
       {onDelete ? (
         <button
           type="button"
-          className="rounded-full bg-orange-100 px-5 py-2 font-bold text-orange-700"
+          className="rounded-full bg-orange-100 px-5 py-2 font-bold text-orange-700 transition hover:bg-orange-200 active:scale-[0.98]"
           onClick={onDelete}
         >
           {deleteLabel}

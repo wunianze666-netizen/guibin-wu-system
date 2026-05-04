@@ -60,7 +60,7 @@ export default function AdminLoginPage() {
           {error ? <p className="rounded-2xl bg-orange-50 p-3 text-sm font-bold text-orange-700">{error}</p> : null}
           <button
             type="button"
-            className="rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-4 font-black text-white shadow-[0_12px_24px_rgba(255,127,36,0.24)]"
+            className="rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-4 font-black text-white shadow-[0_12px_24px_rgba(255,127,36,0.24)] transition hover:brightness-105 active:scale-[0.98]"
             onClick={() => void login()}
           >
             登录后台

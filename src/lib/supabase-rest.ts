@@ -1,5 +1,5 @@
 import { mergeContent } from "@/lib/content-utils";
-import { defaultContent, type SiteContent } from "@/lib/content-data";
+import { createId, defaultContent, type Message, type SiteContent } from "@/lib/content-data";
 
 const CONTENT_ID = "main";
 
@@ -87,4 +87,27 @@ export async function saveSiteContent(content: SiteContent) {
     const message = await response.text();
     throw new Error(`Failed to save site content: ${response.status} ${message}`);
   }
+}
+
+export async function addGuestMessage({
+  name,
+  content,
+}: {
+  name: string;
+  content: string;
+}): Promise<Message> {
+  const currentContent = await fetchSiteContent();
+  const message: Message = {
+    id: createId("message"),
+    name,
+    date: new Date().toISOString().slice(0, 10),
+    content,
+  };
+
+  await saveSiteContent({
+    ...currentContent,
+    messages: [...currentContent.messages, message],
+  });
+
+  return message;
 }

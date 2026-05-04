@@ -116,7 +116,7 @@ export function AdminDashboard() {
         </p>
         <button
           type="button"
-          className="mt-5 rounded-full bg-orange-100 px-5 py-2 font-bold text-orange-700"
+          className="mt-5 rounded-full bg-orange-100 px-5 py-2 font-bold text-orange-700 transition hover:bg-orange-200 active:scale-[0.98]"
           onClick={() => {
             if (window.confirm("确定恢复为默认内容吗？")) resetContent();
           }}
@@ -190,7 +190,7 @@ export function AdminProjects() {
 
   return (
     <div className="space-y-6">
-      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800" onClick={addProject}>
+      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800 transition hover:bg-yellow-200 active:scale-[0.98]" onClick={addProject}>
         添加项目
       </button>
       {content.projects.map((project) => (
@@ -233,7 +233,7 @@ export function AdminWorks() {
 
   return (
     <div className="space-y-6">
-      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800" onClick={addWork}>
+      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800 transition hover:bg-yellow-200 active:scale-[0.98]" onClick={addWork}>
         添加作品
       </button>
       {content.works.map((work) => (
@@ -275,7 +275,7 @@ export function AdminInternships() {
 
   return (
     <div className="space-y-6">
-      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800" onClick={addInternship}>
+      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800 transition hover:bg-yellow-200 active:scale-[0.98]" onClick={addInternship}>
         添加实习经历
       </button>
       {content.internships.map((job) => (
@@ -314,7 +314,7 @@ export function AdminCertificates() {
 
   return (
     <div className="space-y-6">
-      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800" onClick={addCertificate}>
+      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800 transition hover:bg-yellow-200 active:scale-[0.98]" onClick={addCertificate}>
         添加证书/奖项
       </button>
       <div className="grid gap-6 lg:grid-cols-2">
@@ -370,7 +370,7 @@ export function AdminPosts() {
 
   return (
     <div className="space-y-6">
-      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800" onClick={addPost}>
+      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800 transition hover:bg-yellow-200 active:scale-[0.98]" onClick={addPost}>
         添加动态
       </button>
       {content.posts.map((post) => (
@@ -403,7 +403,7 @@ export function AdminMessages() {
 
   return (
     <div className="space-y-6">
-      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800" onClick={addMessage}>
+      <button type="button" className="rounded-full bg-yellow-100 px-5 py-3 font-black text-amber-800 transition hover:bg-yellow-200 active:scale-[0.98]" onClick={addMessage}>
         添加留言
       </button>
       {content.messages.map((message) => (
